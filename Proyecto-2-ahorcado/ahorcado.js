@@ -1,10 +1,11 @@
+const esperar = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Variables
 let palabraSecreta = "";
 let letrasAdivinadas = [];
 let intentos = 6;
 
 // Inicio del juego
-function configurarJuego() {
+async function configurarJuego() {
     console.log("Bienvenidos al Juego del Ahorcado");
     palabraSecreta = prompt("hola, ingresa la palabra: ").toLowerCase();
     
@@ -46,7 +47,7 @@ function procesarIntento(letra) {
 }
 
 // El bucle del juego
-function jugar() {
+async function jugar() {
     configurarJuego();
 
     while (intentos > 0 && letrasAdivinadas.includes("_")) {
@@ -56,6 +57,9 @@ function jugar() {
         // Validación
         if (letraUsuario.length === 1) {
             procesarIntento(letraUsuario);
+
+            await esperar(500);
+            console.clear()
         } else {
             console.log("Por favor, ingresa solo una letra a la vez.");
         }
