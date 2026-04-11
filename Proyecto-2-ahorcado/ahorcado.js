@@ -2,12 +2,22 @@ const esperar = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Variables
 let palabraSecreta = "";
 let letrasAdivinadas = [];
-let intentos = 6;
+let letrasIntentadas = [];
+let intentos = 5;
 
 // Inicio del juego
 async function configurarJuego() {
     console.log("Bienvenidos al Juego del Ahorcado");
-    palabraSecreta = prompt("hola, ingresa la palabra: ").toLowerCase();
+
+    let palabraValida = false;
+    while (!palabraValida) {
+        palabraSecreta = prompt("Bienvenidos, ingresa la palabra: ").toLowerCase();
+
+        // El test /^[a-z]+$/ verifica que solo haya letras de la 'a' a la 'z'
+        if (/^[a-z]+$/.test(palabraSecreta)) {
+            palabraValida = true;
+        }
+    }
     
     // Limpieza de pantalla
     console.clear(); 
@@ -23,6 +33,12 @@ async function configurarJuego() {
 
 // Los intentos
 function procesarIntento(letra) {
+  if (letrasIntentadas.includes(letra)) {
+        console.log(`Ya intentaste la letra "${letra}". ¡Prueba otra!`);
+        return; 
+    }
+    
+    letrasIntentadas.push(letra);
     let acierto = false;
 
     for (let i = 0; i < palabraSecreta.length; i++) {
@@ -48,20 +64,23 @@ function procesarIntento(letra) {
 
 // El bucle del juego
 async function jugar() {
-    configurarJuego();
+    await configurarJuego();
 
     while (intentos > 0 && letrasAdivinadas.includes("_")) {
         console.log("Estado actual: " + letrasAdivinadas.join(" "));
         let letraUsuario = prompt("¿Qué letra desea poner?: ").toLowerCase();
 
         // Validación
-        if (letraUsuario.length === 1) {
+        if (letraUsuario.length === 1 && /^[a-z]+$/.test(letraUsuario)) {
             procesarIntento(letraUsuario);
 
-            await esperar(500);
+            await esperar(1000);
             console.clear()
         } else {
             console.log("Por favor, ingresa solo una letra a la vez.");
+            
+            await esperar(500);
+            console.clear()
         }
     }
 
